@@ -1,5 +1,5 @@
 
-variable "cloudUrl" {}
-variable "cloudUsername" {}
-variable "cloudPassword" {}
-variable "datacenterName" {}
+variable "vsphereUrl" {}
+variable "vsphereUsername" {}
+variable "vspherePassword" {}
+variable "vsphereDatacenter" {}

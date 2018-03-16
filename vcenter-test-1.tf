@@ -1,14 +1,14 @@
 provider "vsphere" {
-  user           = "${var.cloudUsername}"
-  password       = "${var.cloudPassword}"
-  vsphere_server = "${var.cloudUrl}"
+  user           = "${var.vsphereUsername}"
+  password       = "${var.vspherePassword}"
+  vsphere_server = "${var.vsphereUrl}"
   version = "~> 1.3.0"
   # if you have a self-signed cert
   allow_unverified_ssl = true
 }
 
 data "vsphere_datacenter" "dc" {
-  name = "${var.datacenterName}"
+  name = "${var.vsphereDatacenter}"
 }
 
 data "vsphere_datastore" "datastore" {
