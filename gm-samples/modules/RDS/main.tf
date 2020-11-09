@@ -4,6 +4,19 @@ resource "random_string" "password" {
   override_special = "*&^$!#@/;{}[]()"        #pufV#YiC!@
 }
 
+locals {
+  var_iops = {
+    value = max(4000, (var.max_allocated_storage*0.5))
+  }
+}
+
+locals {
+  var_storage = {
+    value = max(var.allocated_storage, (var.max_allocated_storage*0.01))
+  }
+}
+
+
 data "aws_iam_policy_document" "enhanced_monitoring" {
   statement {
     actions = [
@@ -11,19 +24,29 @@ data "aws_iam_policy_document" "enhanced_monitoring" {
     ]
     principals {
       type        = "Service"
-      identifiers = ["monitoring.rds.amazonaws.com"]
+      identifiers = ["monitoring.rds.amazonaws.com", "rds.amazonaws.com"]
     }
   }
 }
 
-resource "aws_iam_role" "enhanced_monitoring" {
-  name               = format("%s-enhanced-monitoring", lower(var.db_name))
+resource "aws_iam_role" "rds_iam_role" {
+  name               = format("%s-rds-iam-role", lower(var.db_name))
   assume_role_policy = "${data.aws_iam_policy_document.enhanced_monitoring.json}"
 }
 
 resource "aws_iam_role_policy_attachment" "enhanced_monitoring" {
-    role       = "${aws_iam_role.enhanced_monitoring.name}"
+    role       = "${aws_iam_role.rds_iam_role.name}"
     policy_arn = "arn:aws-us-gov:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
+resource "aws_db_subnet_group" "group" {
+  name       = format("%s-sngrp", lower(var.db_name))
+  subnet_ids = ["${var.vpc_subnet_az1}", "${var.vpc_subnet_az2}"]     
+  tags = {
+    Name = "${var.db_name} DB subnet group"
+    Author = "Effectual Terraform script"
+    Date = "${timestamp()}"
+  }
 }
 
 data "aws_subnet" "this_subnet" {
@@ -33,17 +56,6 @@ data "aws_subnet" "this_subnet" {
 data "aws_vpc" "selected" {
   id = "${data.aws_subnet.this_subnet.vpc_id}"
 }
-
-resource "aws_db_subnet_group" "group" {
-  name       = format("sngrp-%s", lower(var.db_name))
-  subnet_ids = data.aws_subnet_ids.list_of_vpc_subnets.ids  #["${var.vpc_subnet_az1}", "${var.vpc_subnet_az2}"]     #replace for array of AZs
-  tags = {
-    Name = "${var.db_name} DB subnet group"
-    Author = "Effectual Terraform script"
-    Date = "${timestamp()}"
-  }
-}
-
 
 resource "aws_security_group" "db_sg" {
   name        = format("%s_rds-sg", lower(var.db_name))
@@ -73,10 +85,10 @@ resource "aws_db_instance" "new_db" {
   identifier                  = lower(var.db_name)
   name                        = lower(var.db_name)
   multi_az                    = true
-  allocated_storage           = "${var.allocated_storage}"
+  allocated_storage           = local.var_storage.value     #"${var.allocated_storage}"
   max_allocated_storage       = "${var.max_allocated_storage}"
   storage_type                = "${var.storage_type}" 
-  iops                        = "${var.iops}"
+  iops                        = local.var_iops.value
   storage_encrypted           = true
   port                        = "${var.db_port}"
   backup_retention_period     = var.backup_retention_period
@@ -84,7 +96,7 @@ resource "aws_db_instance" "new_db" {
   maintenance_window          = "${var.maintenance_window}"
   copy_tags_to_snapshot       = true
   monitoring_interval         = 1
-  monitoring_role_arn         = "${aws_iam_role.enhanced_monitoring.arn}"
+  monitoring_role_arn         = "${aws_iam_role.rds_iam_role.arn}"
   enabled_cloudwatch_logs_exports = ["alert", "audit", "listener", "trace"]
   engine                      = "${var.engine_name}"
   engine_version              = "${var.engine_version}"
@@ -99,7 +111,7 @@ resource "aws_db_instance" "new_db" {
   deletion_protection         = false
   delete_automated_backups    = true
   parameter_group_name        = "${aws_db_parameter_group.default.id}"  
-  option_group_name           = "${aws_db_option_group.default.name}"
+  option_group_name           = "${var.enable_s3_integration == true ? aws_db_option_group.with_s3_integration[0].name : aws_db_option_group.without_s3_integration[0].name}"
   username                    = lower(var.db_name)
   password                    = "${random_string.password.result}"
   skip_final_snapshot         = true #for testing purposes
@@ -116,7 +128,7 @@ resource "aws_db_instance" "new_db" {
   Parameter Group
 */
 resource "aws_db_parameter_group" "default" {
-  name        = format("pg-%s", lower(var.db_name))
+  name        = format("%s-pg", lower(var.db_name))
   description = format("Parameter group for %s", var.db_name)
   family      = "${var.family}"
 
@@ -134,11 +146,22 @@ resource "aws_db_parameter_group" "default" {
 /**
   Options group
 */
-resource "aws_db_option_group" "default" {
-  name                     = format("og-%s", lower(var.db_name))
+resource "aws_db_option_group" "without_s3_integration" {
+  count = "${var.enable_s3_integration == false ? 1 : 0}"
+
+  name                     = format("%s-og", lower(var.db_name))
   option_group_description = format("Option group for %s", var.db_name)
   engine_name              = var.engine_name
   major_engine_version     = var.major_engine_version
+
+  option {
+    option_name = "Timezone"
+
+    option_settings {
+      name  = "TIME_ZONE"
+      value = "US/Eastern"
+    }    
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -148,6 +171,49 @@ resource "aws_db_option_group" "default" {
     Author = "Effectual Terraform script"
     Date = "${timestamp()}"
   } 
+}
 
+
+
+/**
+  Options group
+*/
+resource "aws_db_option_group" "with_s3_integration" {
+  count = "${var.enable_s3_integration == true ? 1 : 0}"
+
+  name                     = format("%s-og", lower(var.db_name))
+  option_group_description = format("Option group for %s", var.db_name)
+  engine_name              = var.engine_name
+  major_engine_version     = var.major_engine_version
+
+  option {
+    option_name = "S3_INTEGRATION"    
+  }
+
+  option {
+    option_name = "Timezone"
+
+    option_settings {
+      name  = "TIME_ZONE"
+      value = "US/Eastern"
+    }    
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+  
+  tags = {
+    Author = "Effectual Terraform script"
+    Date = "${timestamp()}"
+  } 
+}
+
+resource "aws_db_instance_role_association" "test" {
+  count = "${var.enable_s3_integration == true ? 1 : 0}"
+
+  db_instance_identifier = "${aws_db_instance.new_db.id}"
+  feature_name           = "S3_INTEGRATION"
+  role_arn               = "${aws_iam_role.rds_iam_role.arn}"
 }
 

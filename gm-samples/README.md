@@ -57,7 +57,7 @@ Important optional inputs (with their default values in parenthesis):
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| client | Name of the client | `string` | `TomcartLabs` | yes |
+| client | Name of the client | `string` | `GinnieMae` | yes |
 | account\_name | Name of client's account | `string` | `DMC3Test` | yes |
 | environment | Environment in which the RDS is created | `string` | n/a | no |
 | region | Region where the resources will be created | `string` | `us-gov-east-1` | yes |
@@ -93,16 +93,15 @@ Important optional inputs (with their default values in parenthesis):
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | engine\_name | Specifies the name of the engine that this option group should be associated with | `string` | `oracle-ee` | yes |
-| options | A list of Options to apply | `any` | `""` | no |
-| db\_username | Username | `string` | `""` | yes |
 | major\_engine\_version | Specifies the major version of the engine that this option group should be associated with | `string` | `12.1` | yes |
-| option\_group\_timeouts | Define maximum timeout for deletion of `aws_db_option_group` resource | `map(string)` | 15m | yes |
+| enable\_s3\_integration | Indicates if S3 integration should be turned on or not | `boolean` | true | yes |
 
 ### For the Secret
 These values are not required as inputs. Terraform autopopulates these variables using the outputs from the RDS module.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| secret\_arn | The ARN of an existing secret, if the values should be updated. Leave blank if a new Secret needs to be created | `string` | `""` | no |
 | secret\_value\_dbendpoint | String to connect to the DB | `string` | `""` | yes |
 | secret\_value\_dbarn | ARN of the DB | `string` | `""` | yes |
 | secret\_value\_dbpassword | Password for the master user | `string` | `""` | yes |

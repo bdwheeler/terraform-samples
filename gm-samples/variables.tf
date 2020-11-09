@@ -1,10 +1,10 @@
 /**
-    Provider variables
+    Providers variables
 */
 variable "region" {
   description = "Region where the resources will be created"
   type        = string 
-  default = "us-east-1"
+  default = "us-gov-west-1"
 }
 
 variable "access_key"{
@@ -21,7 +21,7 @@ variable "secret_key" {
 variable "soc_region" {
   description = "Region for the SOC account (to create the Secret)"
   type        = string 
-  default = "us-east-1"
+  default = "us-gov-west-1"
 }
 
 variable "soc_access_key"{
@@ -34,19 +34,20 @@ variable "soc_secret_key" {
   type        = string 
 }
 
+
 /**
     Generic variables
 */
 variable "client"{
   description = "Name of the client"
   type        = string 
-  default     = "TomcartLabs"
+  default     = "GinnieMae"
 }
 
 variable "account_name" { 
-  description = "AWS Account name"
+  description = "AWS Account name (i.e. RFS, MyGinnieMaeDev, DMC3-Test, CICD)"
   type        = string 
-  default     = "TomcartLabs"
+  default     = "RFS"
 }
 
 variable "environment"{
@@ -55,9 +56,16 @@ variable "environment"{
   default     = ""
 }
 
+
 /***
     Variables required to create a secret
 **/
+variable "secret_arn"{
+   description = "The ARN of an existing secret, if the values should be updated. Leave blank if a new Secret needs to be created"
+   type = "string"
+   default = ""
+}
+
 variable "secret_cmk_id" {
   description = "The ID of the Customer Managed Key used to encrypt the Secret"
   type        = string
@@ -67,21 +75,31 @@ variable "secret_cmk_id" {
 variable "cicd_role_arn"{
   description = "The ARN of the CICD Role that will be given access to the Secret"
   type        = string
-  default     = "arn:aws:iam::046934853828:instance-profile/yorhaMaster"
+  default     = "arn:aws-us-gov:iam::678100103589:role/CICD_SOCSecretRetriever_Role"
 }
 
 
 /**
     Variables required to create the Security Group, IAM Role and Policy    
 */
+/*
+variable "vpc_id" {
+  description = "The ID of the VPC where the RDS DB will be created"
+  type        = string
+ # default     = "vpc-0a4c258982b48c5f0"
+}
+*/
+
 variable "vpc_subnet_az1"{
   description = "ID of the VPC subnet in the 1st Availability Zone"
   type        = string
+  #default     = "subnet-0c6b68ad1b5731ff8"
 }
 
 variable "vpc_subnet_az2"{
   description = "ID of the VPC subnet in the 2nd Availability Zone"
   type        = string  
+  #default     = "subnet-01677bc21cc8f2c15"
 }
 
 /***
@@ -90,8 +108,9 @@ variable "vpc_subnet_az2"{
 variable "family" {
   description = "The family of the DB parameter group"
   type        = string
-  default     = "oracle-ee-12.1"
+  default     = "oracle-ee-19"
 }
+
 
 /***
     Variables required to create an options group
@@ -101,11 +120,17 @@ variable "engine_name" {
   type        = string
   default     = "oracle-ee"
 }
+
+variable "options" {
+  description = "A list of Options to apply"
+  type        = any
+  default     = []
+}
   
 variable "major_engine_version" {
   description = "Specifies the major version of the engine that this option group should be associated with"
   type        = string
-  default     = "12.1"
+  default     = "19"
 }
 
 /***
@@ -121,6 +146,14 @@ variable "db_name"{
   description = "Name of the new database, must be provided"
   type        = string 
 }
+
+/*
+variable "db_username"{
+  description = "Username, must be provided"
+  type        = string 
+}
+*/
+
 
 variable "db_port"{
   description = "The port on which the DB accepts connections"
@@ -143,25 +176,19 @@ variable "max_allocated_storage" {
 variable "engine_version" {
   description = "The engine version to use"
   type        = string
-  default     = "12.1"
+  default     = "19"
 }
 
 variable "character_set_name" {
   description = "(Optional) The character set name to use for DB encoding in Oracle instances. This can't be changed. See Oracle Character Sets Supported in Amazon RDS for more information"
   type        = string
-  default     = ""
+  default     = "WE8MSWIN1252"
 }
 
 variable "instance_class"{
-  description = "Type of instance"
+  description = "Type of instance (i.e. db.m5.2xlarge)"
   type        = string 
-  default     = "db.m5.2xlarge"
-}
-
-variable "iops"{
-  description = "IOPS"
-  type        = number
-  default     = 4000
+  default     = "db.m5.xlarge"
 }
 
 variable "storage_type"{
@@ -189,3 +216,9 @@ variable "maintenance_window" {
   default     = "Fri:22:00-Fri:23:00"
 }
 
+
+variable "enable_s3_integration"{
+  description = "Indicates if S3 integration should be turned on or not"
+  type        = bool 
+  default     = true
+}

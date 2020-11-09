@@ -1,8 +1,21 @@
+variable "secret_arn"{
+   description = "The ARN of an existing secret, if the values should be updated. Leave blank if a new Secret needs to be created"
+   type = "string"
+   default = ""
+}
+
+variable "secret_name" { 
+  description = "Leave blank. The system will automatically popuplate this field."
+  type = "string"
+   default = "N/A"
+}
+
 variable "soc_region" {
   description = "Region for the SOC account (to create the Secret)"
   type        = string 
-  default = "us-west-1"
+  default     = "us-gov-west-1"
 }
+
 
 variable "soc_access_key"{
   description = "Access Key for the SOC account (to create the Secret)"
@@ -14,25 +27,33 @@ variable "soc_secret_key" {
   type        = string 
 }
 
-variable "secret_name" { 
-  type = "string"
+
+variable "db_port"{
+  description = "The port on which the DB accepts connections"
+  type        = string
+  default     = "1521"
 }
 
-/*
-variable "secret_values" {
-  default = {
-    DBName = "tres"
-    DBEndPoint = "tres.crrkqfc6amb8.us-east-1.rds.amazonaws.com:1521"
-    DBARN = "arn:aws-us-gov:ec2:us-east-1:861511318332:vpc/vpc-0a4c258982b48c5f0"
-    Username = "usrtres"
-    Password = "v^H8AnvDb^"
-  }
 
-  type = "map"
-
-  description = "A list with all the key-value pairs that will be stored as a single secret in SOC's Secrets Manager"
+variable "account_name" { 
+  description = "AWS Account name (i.e. RFS, MyGinnieMaeDev, DMC3-Test, CICD)"
+  type        = string 
+  default     = "RFS"
 }
-*/
+
+variable "engine_name" {
+    type    = "string"
+    default = "placeholder"
+}
+
+variable "secret_cmk_id" {
+  default = "b212caf4-3256-4e98-9851-ca49fdfb00c1"
+}
+
+variable "cicd_role_arn"{
+  default = "arn:aws-us-gov:iam::678100103589:role/CICD_SOCSecretRetriever_Role"
+}
+
 
 variable "secret_value_dbname" {
     type = "string"
@@ -59,10 +80,3 @@ variable "secret_value_dbpassword" {
     default = "placeholder"
 }
 
-variable "secret_cmk_id" {
-  default = "b212caf4-3256-4e98-9851-ca49fdfb00c1"
-}
-
-variable "cicd_role_arn"{
-  default = "arn:aws:iam::046934853828:instance-profile/yorhaMaster"
-}

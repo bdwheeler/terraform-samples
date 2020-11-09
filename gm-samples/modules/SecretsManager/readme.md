@@ -18,11 +18,14 @@ The provider.tf file must be given keys to the SOC account, which will most like
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| secret\_name | Name of the client | `string` | `""` | yes |
-| secret\_value\_dbendpoint | String to connect to the DB | `string` | `""` | yes |
-| secret\_value\_dbarn | ARN of the DB | `string` | `""` | yes |
-| secret\_value\_dbusername | Master username to connect to the DB | `string` | `""` | yes |
-| secret\_value\_dbpassword | Password for the master user | `string` | `""` | yes |
+| secret\_name | Name of the client | `string` | `""` | no |
+| secret\_arn | The ARN of an existing secret, if the values should be updated. Leave blank if a new Secret needs to be created | `string` | `""` | no |
+| secret\_value\_dbendpoint | String to connect to the DB. Leave blank as the code itself will fill this info | `string` | `""` | no |
+| secret\_value\_dbarn | ARN of the DB. Leave blank as the code itself will fill this info | `string` | `""` | no |
+| secret\_value\_dbpassword | Password for the master user. Leave blank as the code itself will fill this info | `string` | `""` | no |
+| port | Connection port | `string` | `""` | no |
+| engine\_name | Engine name (i.e. oracle-ee) | `string` | `""` | no |
+| client\_name | Name of the client (GinnieMae) | `string` | `""` | no |
 
 ## Outputs
 
@@ -38,5 +41,5 @@ terraform apply -var secret_name="<NEW_SECRET_NAME>" -var='secret_values={"DBEnd
 
 Example:
 ```terraform
-terraform apply -var secret_name="TomcartLabs/YoRHaLab/RDS/cinco" -var='secret_values={"DBEndpoint":"cinco.crrkqfc6amb8.us-gov-east-1.rds.amazonaws.com","DBARN":"arn:aws-us-gov:rds:us-gov-east-1:861511318332:db:cinco", "Username":"usrcinco", "Password":"abc1234!"}'
+terraform apply -var secret_name="GinnieMae/DMC3Test/RDS/cinco" -var='secret_values={"DBEndpoint":"cinco.crrkqfc6amb8.us-gov-east-1.rds.amazonaws.com","DBARN":"arn:aws-us-gov:rds:us-gov-east-1:861511318332:db:cinco", "Username":"usrcinco", "Password":"abc1234!"}'
 ```

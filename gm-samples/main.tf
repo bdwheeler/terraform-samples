@@ -4,7 +4,7 @@ module "mod_rds" {
     #inputs:
     access_key              = var.access_key
     secret_key              = var.secret_key
-
+    
     client                  = var.client
     environment             = var.environment
     region                  = var.region
@@ -13,7 +13,7 @@ module "mod_rds" {
     family                  = var.family
     engine_name             = var.engine_name
     major_engine_version    = var.major_engine_version
-    # options                 = var.options
+    options                 = var.options
     db_name                 = lower(var.db_name)
     db_port                 = var.db_port
     allocated_storage       = var.allocated_storage
@@ -28,10 +28,14 @@ module "mod_secretsmanager" {
     soc_access_key          = var.soc_access_key
     soc_secret_key          = var.soc_secret_key
 
-    secret_name             = "${var.client}/${var.account_name}/RDS/${var.db_name}"  #Will result in TomcartLabs/YoRHaLab/RDS/<dbname> 
+    secret_name             = "${var.client}/${var.account_name}/RDS/${var.db_name}"  #Will result in GinnieMae/DMC3Test/RDS/<dbname> 
+    secret_arn              = var.secret_arn
     secret_value_dbname     = lower(var.db_name)
     secret_value_dbendpoint = "${module.mod_rds.new_db_instance_endpoint}"
     secret_value_dbarn      = "${module.mod_rds.new_db_instance_arn}"
     secret_value_dbusername = "${module.mod_rds.new_db_instance_username}"
     secret_value_dbpassword = "${module.mod_rds.new_db_instance_password}"
+    db_port                 = "${var.db_port}"
+    account_name            = "${var.account_name}"
+    engine_name             = "${var.engine_name}"
 }

@@ -1,5 +1,6 @@
-
 resource "aws_secretsmanager_secret" "new_secret_object" {
+  count = "${var.secret_arn == "" ? 1 : 0}"
+
   name                = "${var.secret_name}"
   description         = "RDS info"
   kms_key_id          = "${var.secret_cmk_id}" 
@@ -31,9 +32,10 @@ resource "aws_secretsmanager_secret" "new_secret_object" {
 EOF
 }
 
-
 resource "aws_secretsmanager_secret_version" "values" {
-  secret_id     = "${aws_secretsmanager_secret.new_secret_object.id}" 
+  count = "${var.secret_arn == "" ? 1 : 0}"
+
+  secret_id     = "${aws_secretsmanager_secret.new_secret_object[0].id}" 
   #secret_string = "${jsonencode(var.secret_values)}"  
    secret_string = <<EOF
     {
@@ -41,9 +43,30 @@ resource "aws_secretsmanager_secret_version" "values" {
     "DBEndPoint" : "${var.secret_value_dbendpoint}",
     "DBARN" : "${var.secret_value_dbarn}",
     "Username" : "${var.secret_value_dbusername}",
-    "Password" : "${var.secret_value_dbpassword}"    
+    "Password" : "${var.secret_value_dbpassword}", 
+      "Port"       : "${var.db_port}",
+      "Account"    : "${var.account_name}"    ,
+      "Engine"     : "${var.engine_name}"  
     }
 EOF
   #The code below was replaced by the secret_string above to make the script work with Morpheus.
   #"${jsonencode(DBName = ${var.secret_value_dbname}, DBEndPoint = ${var.secret_value_dbendpoint}, DBARN = ${var.secret_value_dbarn}, Username = ${var.secret_value_dbusername}, Password = ${var.secret_value_dbpassword})}"  
+}
+
+resource "aws_secretsmanager_secret_version" "values2" {
+  count = "${var.secret_arn != "" ? 1 : 0}"
+
+  secret_id     = "${var.secret_arn}" 
+   secret_string = <<EOF
+    {
+      "DBName"     : "${var.secret_value_dbname}",
+      "DBEndPoint" : "${var.secret_value_dbendpoint}",
+      "DBARN"      : "${var.secret_value_dbarn}",
+      "Username"   : "${var.secret_value_dbusername}",
+      "Password"   : "${var.secret_value_dbpassword}", 
+      "Port"       : "${var.db_port}",
+      "Account"    : "${var.account_name}"    ,
+      "Engine"     : "${var.engine_name}"     
+    }
+EOF
 }
