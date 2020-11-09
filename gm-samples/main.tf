@@ -13,7 +13,7 @@ module "mod_rds" {
     family                  = var.family
     engine_name             = var.engine_name
     major_engine_version    = var.major_engine_version
-    options                 = var.options
+    # options                 = var.options
     db_name                 = lower(var.db_name)
     db_port                 = var.db_port
     allocated_storage       = var.allocated_storage
