@@ -1,10 +1,10 @@
 module "mod_rds" {
+
     source      = "./modules/RDS/"
 
     #inputs:
     access_key              = var.access_key
-    secret_key              = var.secret_key
-    
+    secret_key              = var.secret_key    
     client                  = var.client
     environment             = var.environment
     region                  = var.region
@@ -22,12 +22,13 @@ module "mod_rds" {
 }
 
 module "mod_secretsmanager" {
+
     source = "./modules/SecretsManager/"
 
     #inputs:
     soc_access_key          = var.soc_access_key
     soc_secret_key          = var.soc_secret_key
-
+    soc_region              = var.soc_region
     secret_name             = "${var.client}/${var.account_name}/RDS/${var.db_name}"  #Will result in GinnieMae/DMC3Test/RDS/<dbname> 
     secret_arn              = var.secret_arn
     secret_value_dbname     = lower(var.db_name)
@@ -38,4 +39,5 @@ module "mod_secretsmanager" {
     db_port                 = "${var.db_port}"
     account_name            = "${var.account_name}"
     engine_name             = "${var.engine_name}"
+
 }
