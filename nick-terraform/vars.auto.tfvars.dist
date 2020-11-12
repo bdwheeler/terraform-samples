@@ -1,0 +1,11 @@
+morpheus_fqdn = ""
+route53_domain_name = ""
+ssh_allowed_ips = ["/32"]
+pubkey_path = "~/.ssh/id_rsa.pub"
+db_name = "morpheusdb"
+db_username = "morpheus"
+db_password = ""
+rmq_user = ""
+rmq_password = ""
+rmq_broker_endpoint_temp = ""
+ssl_certificate_arn = ""
