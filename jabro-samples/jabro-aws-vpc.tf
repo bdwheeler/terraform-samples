@@ -11,6 +11,7 @@ variable "vpc_cidr" {
 variable "vpc_name" {
   type = string
   description = "Name for the VPC"
+  default = "<%=customOptions.house%>"
 }
 
 terraform {
