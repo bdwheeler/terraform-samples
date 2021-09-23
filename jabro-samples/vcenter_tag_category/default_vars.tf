@@ -18,16 +18,6 @@ variable "category_name" {
 variable "category_cardinality" {
     type = string
     default = "SINGLE"
-
-    validation {
-      condition = anytrue(
-          [
-              var.category_cardinality == "SINGLE",
-              var.category_cardinality == "MULTIPLE"
-          ]
-      )
-      error_message = "Please enter a cardinality of either SINGLE or MULTIPLE."
-    }
 }
   
 
