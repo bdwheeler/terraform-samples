@@ -17,6 +17,10 @@ variable "environment" {
   default = "<%=input.instanceContext%>"
 }
 
+variable "externalVar" {
+  type = string
+}
+
 ### Initialize Providers
 provider "aws" {
   access_key = var.access_key

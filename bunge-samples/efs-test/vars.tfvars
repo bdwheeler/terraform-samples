@@ -1,1 +1,1 @@
-efsName = "test-var-name"
+externalVar = "test-var"
