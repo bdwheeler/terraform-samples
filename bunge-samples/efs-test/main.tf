@@ -35,5 +35,6 @@ resource "aws_efs_file_system" "efs" {
   tags = {
     Name = var.efsName
     Environment = var.environment
+    TestTag = var.externalVar
   }
 }
