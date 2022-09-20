@@ -36,7 +36,7 @@ variable "db_port"{
 
 
 variable "account_name" { 
-  description = "AWS Account name (i.e. RFS, MyGinnieMaeDev, DMC3-Test, CICD)"
+  description = "AWS Account name (i.e. RFS, client-1, DMC3-Test, CICD)"
   type        = string 
   default     = "RFS"
 }

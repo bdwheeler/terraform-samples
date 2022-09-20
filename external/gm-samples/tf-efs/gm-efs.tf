@@ -12,7 +12,7 @@ locals {
 variable "client" {
   description = "Name of the client"
   type        = string 
-  default     = "Ginnie Mae"
+  default     = "client-1"
 }
 
 variable "environment" {

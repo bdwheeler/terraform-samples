@@ -22,7 +22,7 @@ variable "secret_key" {
 variable "client"{
   description = "Name of the client"
   type        = string 
-  default     = "Deloitte / Ginnie Mae"
+  default     = "client-1"
 }
 
 variable "environment"{
@@ -37,13 +37,11 @@ variable "environment"{
 variable "vpc_subnet_az1"{
   description = "ID of the VPC subnet in the 1st Availability Zone"
   type        = string
-  #default     = "subnet-0c6b68ad1b5731ff8"
 }
 
 variable "vpc_subnet_az2"{
   description = "ID of the VPC subnet in the 2nd Availability Zone"
-  type        = string  
-  #default     = "subnet-01677bc21cc8f2c15"
+  type        = string
 }
 
 /***

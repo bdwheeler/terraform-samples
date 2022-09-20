@@ -29,7 +29,7 @@ module "mod_secretsmanager" {
     soc_access_key          = var.soc_access_key
     soc_secret_key          = var.soc_secret_key
     soc_region              = var.soc_region
-    secret_name             = "${var.client}/${var.account_name}/RDS/${var.db_name}"  #Will result in GinnieMae/DMC3Test/RDS/<dbname> 
+    secret_name             = "${var.client}/${var.account_name}/RDS/${var.db_name}"  #Will result in client-1/DMC3Test/RDS/<dbname> 
     secret_arn              = var.secret_arn
     secret_value_dbname     = lower(var.db_name)
     secret_value_dbendpoint = "${module.mod_rds.new_db_instance_endpoint}"

@@ -25,7 +25,7 @@ The provider.tf file must be given keys to the SOC account, which will most like
 | secret\_value\_dbpassword | Password for the master user. Leave blank as the code itself will fill this info | `string` | `""` | no |
 | port | Connection port | `string` | `""` | no |
 | engine\_name | Engine name (i.e. oracle-ee) | `string` | `""` | no |
-| client\_name | Name of the client (GinnieMae) | `string` | `""` | no |
+| client\_name | Name of the client (client-1) | `string` | `""` | no |
 
 ## Outputs
 

@@ -57,7 +57,7 @@ Important optional inputs (with their default values in parenthesis):
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| client | Name of the client | `string` | `GinnieMae` | yes |
+| client | Name of the client | `string` | `client-1` | yes |
 | account\_name | Name of client's account | `string` | `DMC3Test` | yes |
 | environment | Environment in which the RDS is created | `string` | n/a | no |
 | region | Region where the resources will be created | `string` | `us-gov-east-1` | yes |
