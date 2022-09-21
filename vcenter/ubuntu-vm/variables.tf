@@ -17,7 +17,7 @@ variable "vmDatastore" {}
 
 variable "vmResourcePool" {}
 
-variable "vmNetwork" = {}
+variable "vmNetwork" {}
 
 variable "vmUsername" {
   sensitive = true
