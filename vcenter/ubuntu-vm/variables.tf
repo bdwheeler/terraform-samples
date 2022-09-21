@@ -13,8 +13,6 @@ variable "cloudDatacenter" {}
 
 variable "vmDatastore" {}
 
-variable "vmDatastore" {}
-
 variable "vmResourcePool" {}
 
 variable "vmNetwork" {}
