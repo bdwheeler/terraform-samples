@@ -3,8 +3,10 @@ variable "cloudUrl" {
 }
 variable "vcenterUsername" {
   default = "administrator@wheeler.house"
+  sensitive = true
 }
 variable "vcenterPassword" {
+  sensitive = true
 }
 variable "datacenterName" {
   default = "wheeler"
