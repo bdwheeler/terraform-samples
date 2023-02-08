@@ -5,9 +5,9 @@ terraform {
      
       ## Keep one version commented      
       ## Starting Version
-      version = "3.4.0"
-      ## Upgraded version
       # version = "3.4.3"
+      ## Upgraded version
+      version = "3.4.4"
     }
   }
 }
